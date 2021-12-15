@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using MyStore.ProductApi.Config;
 using MyStore.ProductApi.Model.Context;
+using MyStore.ProductApi.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +36,12 @@ namespace MyStore.ProductApi
             {
                 options.UseMySql(connection, new MySqlServerVersion(new Version(8, 0, 27)));
             }); 
+
+            IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+            services.AddSingleton(mapper);
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
