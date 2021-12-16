@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyStore.MVC.Models;
+using MyStore.MVC.Services.IServices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,15 +13,25 @@ namespace MyStore.MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductService _productService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,
+            IProductService productService)
         {
             _logger = logger;
+            _productService = productService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var products = await _productService.FindAllProducts();
+            return View(products);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var model = await _productService.FindProductById(id);
+            return View(model);
         }
 
         public IActionResult Privacy()
@@ -33,5 +44,15 @@ namespace MyStore.MVC.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        //public async Task<IActionResult> Login()
+        //{
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        //public IActionResult Logout()
+        //{
+        //    return SignOut("Cookies", "oidc");
+        //}
     }
 }

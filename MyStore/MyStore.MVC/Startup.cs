@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyStore.MVC.Services;
+using MyStore.MVC.Services.IServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,9 @@ namespace MyStore.MVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient<IProductService, ProductService>(
+                c => c.BaseAddress = new Uri(Configuration["ServicesUrls:ProductAPI"]) 
+            );
             services.AddControllersWithViews();
         }
 
